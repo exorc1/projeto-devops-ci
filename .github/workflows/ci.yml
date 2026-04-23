@@ -1,6 +1,31 @@
-- name: Enviar Alerta para o Discord
-        if: failure()
-        run: |
-          curl -H "Content-Type: application/json" \
-          -d '{"content": "🚨 **ERRO NO DEPLOY!**\nO workflow do repositório ${{ github.repository }} falhou. Verifique os logs agora!"}' \
-          ${{ secrets.DISCORD_WEBHOOK }}
+name: CI Integracao e Alertas
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+    - name: Fazer o checkout do codigo
+      uses: actions/checkout@v3
+
+    - name: Configurar Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Rodar Testes Unitarios
+      run: python -m unittest test_app.py
+
+    - name: Enviar Alerta para o Discord
+      if: failure()
+      run: |
+        curl -H "Content-Type: application/json" \
+        -d '{"content": "🚨 **ERRO NO DEPLOY!**\nO workflow do repositório ${{ github.repository }} falhou. Verifique os logs agora!"}' \
+        ${{ secrets.DISCORD_WEBHOOK }}
