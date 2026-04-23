@@ -4,7 +4,7 @@ from app import somar, subtrair, multiplicar, dividir, quadrado
 
 class TestApp(unittest.TestCase):
     def test_somar(self):
-        self.assertEqual(somar(2, 3), 99)
+        self.assertEqual(somar(2, 3), 5)
 
     def test_subtrair(self):
         self.assertEqual(subtrair(10, 5), 5)
